@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import Callable
 
 import pytest
@@ -18,6 +19,23 @@ async def test_button_click_updates_label(user: User) -> None:
         with bs.scope():
             status = ui.label("Idle")
             bs.button("Apply", on_click=lambda: status.set_text("Applied"))
+
+    await user.open("/")
+    user.find("Apply").click()
+    await user.should_see("Applied")
+
+
+async def test_async_handlers_are_awaited(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+
+    async def handler() -> None:
+        await asyncio.sleep(0)
+        ui.label("Applied")
+
+    @ui.page("/")
+    def page() -> None:
+        with bs.scope():
+            bs.button("Apply", on_click=handler)
 
     await user.open("/")
     user.find("Apply").click()

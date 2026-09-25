@@ -6,6 +6,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .._base import BootstrapElement, make_surface_classes
+from .._host import call_handler
 
 __all__ = [
     "Button",
@@ -202,7 +203,7 @@ class _ButtonImpl(BootstrapElement):
             return
         self._n_clicks += 1
         if self._on_click is not None:
-            self._on_click()
+            call_handler(self._on_click)
 
 
 class _ButtonGroupImpl(BootstrapElement):

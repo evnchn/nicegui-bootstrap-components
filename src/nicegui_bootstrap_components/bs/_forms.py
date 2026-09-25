@@ -7,6 +7,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .._base import BootstrapElement, UnsupportedPropError, make_surface_classes
+from .._host import call_handler
 from ._layout import col_breakpoint_classes
 
 __all__ = [
@@ -211,7 +212,7 @@ class _FormImpl(BootstrapElement):
     def _handle_submit(self, *_args: Any, **_kwargs: Any) -> None:
         self._n_submit += 1
         if self._on_submit is not None:
-            self._on_submit()
+            call_handler(self._on_submit)
 
 
 class _LabelImpl(BootstrapElement):

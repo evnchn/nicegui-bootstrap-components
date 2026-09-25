@@ -14,6 +14,7 @@ from .._base import (
     UnsupportedPropError,
     make_surface_classes,
 )
+from .._host import call_handler
 
 _UNSET = object()
 
@@ -334,13 +335,13 @@ class _TextControlBase(BootstrapValueElement):
         self.n_blur = int(getattr(self, "n_blur", 0)) + 1
         self._publish(e)
         if self._on_blur_cb is not None:
-            self._on_blur_cb(getattr(self, "value", ""))
+            call_handler(self._on_blur_cb, getattr(self, "value", ""))
 
     def _on_enter(self, e: Any) -> None:
         self.n_submit = int(getattr(self, "n_submit", 0)) + 1
         self._publish(e)
         if self._on_submit_cb is not None:
-            self._on_submit_cb(getattr(self, "value", ""))
+            call_handler(self._on_submit_cb, getattr(self, "value", ""))
 
 
 class _InputImpl(_TextControlBase):

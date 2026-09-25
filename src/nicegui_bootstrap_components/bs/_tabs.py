@@ -17,6 +17,7 @@ from .._base import (
     normalize_style,
     resolve_class_name,
 )
+from .._host import call_handler
 
 __all__ = [
     "Tabs",
@@ -520,7 +521,7 @@ class _TabsImpl(BootstrapElement):
         self._apply_active_classes()
         self._persist_save()
         if from_user and self._on_change is not None:
-            self._on_change(tab_id)
+            call_handler(self._on_change, tab_id)
 
     def _apply_active_classes(self) -> None:
         for tab in self._tabs:

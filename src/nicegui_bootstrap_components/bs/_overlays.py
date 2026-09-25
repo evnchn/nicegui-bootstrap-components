@@ -17,7 +17,7 @@ from .._base import (
     UnsupportedPropError,
     make_surface_classes,
 )
-from .._host import set_element_text
+from .._host import call_handler, set_element_text
 
 if TYPE_CHECKING:
 
@@ -1515,17 +1515,17 @@ def _wire_overlay_events(
     def _shown(_e: Any = None) -> None:
         _echo_open_state(el, True)
         if el._on_shown_cb is not None:
-            el._on_shown_cb()
+            call_handler(el._on_shown_cb)
 
     def _hidden(_e: Any = None) -> None:
         _echo_open_state(el, False)
         if el._on_hidden_cb is not None:
-            el._on_hidden_cb()
+            call_handler(el._on_hidden_cb)
 
     def _dismiss(_e: Any = None) -> None:
         _echo_open_state(el, False)
         if el._on_dismiss_cb is not None:
-            el._on_dismiss_cb()
+            call_handler(el._on_dismiss_cb)
 
     el.on("shown", _shown)
     el.on("hidden", _hidden)
@@ -2242,7 +2242,7 @@ class _DropdownMenuItemImpl(_SlotRedirect, BootstrapElement):
             return
         callback = getattr(parent, "_on_item_click", None)
         if callback is not None:
-            callback(self)
+            call_handler(callback, self)
         if self._toggle:
             closer = getattr(parent, "close", None)
             if callable(closer):
@@ -2462,7 +2462,7 @@ class _AccordionImpl(BootstrapElement):
         self._active_item = resolved
         self._sync_item_expanded()
         if self._on_change is not None:
-            self._on_change(resolved)
+            call_handler(self._on_change, resolved)
 
     @property
     def always_open(self) -> bool:

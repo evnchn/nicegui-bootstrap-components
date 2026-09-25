@@ -8,7 +8,7 @@ from typing import Any
 from nicegui.element import Element
 
 from .._base import BootstrapElement, make_surface_classes, normalize_style, style_to_css
-from .._host import set_element_text
+from .._host import call_handler, set_element_text
 
 __all__ = [
     "Carousel",
@@ -305,7 +305,7 @@ class _CarouselImpl(BootstrapElement):
                 indicator_el.classes(remove="active")
                 indicator_el._props["aria-current"] = "false"
         if notify and changed and self._on_change is not None:
-            self._on_change()
+            call_handler(self._on_change)
 
 
 Carousel, DbcCarousel = make_surface_classes("Carousel", globals())

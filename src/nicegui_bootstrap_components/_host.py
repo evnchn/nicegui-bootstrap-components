@@ -8,13 +8,16 @@ access, asset injection, and move helpers from here — never from ``nicegui``.
 from __future__ import annotations
 
 import json
+from collections.abc import Awaitable, Callable
+from contextlib import nullcontext
 from typing import Any
 from weakref import WeakKeyDictionary
 
+from nicegui import background_tasks, helpers, ui
 from nicegui import core as ng_core
-from nicegui import ui
 from nicegui.element import Element as UiElement
 from nicegui.elements.mixins.value_element import ValueElement as UiValueElement
+from nicegui.slot import Slot
 
 try:
     from nicegui import context as ng_context
@@ -28,6 +31,7 @@ __all__ = [
     "add_css",
     "add_head_html",
     "add_static_files",
+    "call_handler",
     "client_store",
     "create_text_span",
     "get_app",
@@ -200,6 +204,23 @@ def client_store(client: Any | None = None) -> dict[str, Any]:
             store = {}
             _ID_STORES[id(client)] = store
         return store
+
+
+def call_handler(callback: Callable[..., Any], *args: Any) -> None:
+    """Call a user callback; if it returns an awaitable, await it in the current slot."""
+    result = callback(*args)
+    if helpers.should_await(result):
+        stack = Slot.get_stack()
+        slot = stack[-1] if stack else nullcontext()
+        background_tasks.create_or_defer(_await_in_slot(result, slot), name=str(callback))
+
+
+async def _await_in_slot(awaitable: Awaitable[Any], slot: Any) -> None:
+    with slot:
+        try:
+            await awaitable
+        except Exception as e:
+            ng_core.app.handle_exception(e)
 
 
 def run_javascript(code: str, *, client: Any | None = None) -> Any:

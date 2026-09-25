@@ -18,7 +18,7 @@ from .._base import (
     resolve_class_name,
     style_to_css,
 )
-from .._host import set_element_text
+from .._host import call_handler, set_element_text
 
 __all__ = [
     "Badge",
@@ -855,7 +855,7 @@ class _CardLinkImpl(BootstrapElement):
     def _handle_click(self, *_args: Any, **_kwargs: Any) -> None:
         self._n_clicks += 1
         if self._on_click is not None:
-            self._on_click()
+            call_handler(self._on_click)
 
 
 CardLink, DbcCardLink = make_surface_classes("CardLink", globals())
@@ -963,7 +963,7 @@ class _ListGroupItemImpl(BootstrapElement):
     def _handle_click(self, *_args: Any, **_kwargs: Any) -> None:
         self._n_clicks += 1
         if self._on_click is not None:
-            self._on_click()
+            call_handler(self._on_click)
 
 
 ListGroupItem, DbcListGroupItem = make_surface_classes("ListGroupItem", globals())
@@ -1125,7 +1125,7 @@ class _BadgeImpl(BootstrapElement):
     def _handle_click(self, *_args: Any, **_kwargs: Any) -> None:
         self._n_clicks += 1
         if self._on_click is not None:
-            self._on_click()
+            call_handler(self._on_click)
 
 
 Badge, DbcBadge = make_surface_classes("Badge", globals())
