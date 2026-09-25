@@ -15,7 +15,7 @@ from .._base import (
     lookup_public_id,
     make_surface_classes,
 )
-from .._host import client_store, get_client
+from .._host import call_handler, client_store, get_client
 
 __all__ = [
     "Navbar",
@@ -337,7 +337,7 @@ class _NavbarTogglerImpl(BootstrapElement):
         self._n_clicks += 1
         self._toggle_target()
         if self._on_click is not None:
-            self._on_click()
+            call_handler(self._on_click)
 
 
 NavbarToggler, DbcNavbarToggler = make_surface_classes("NavbarToggler", globals())

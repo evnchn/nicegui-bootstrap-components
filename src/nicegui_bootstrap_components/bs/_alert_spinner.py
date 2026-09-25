@@ -14,7 +14,7 @@ from .._base import (
     normalize_style,
     resolve_class_name,
 )
-from .._host import set_element_text
+from .._host import call_handler, set_element_text
 from ._overlays import _adopt_into, _ensure_overlay_runtime, _portal_to_overlay_root
 
 __all__ = [
@@ -278,7 +278,7 @@ class _AlertImpl(BootstrapElement):
         self._cancel_timer()
         self._apply_open_classes()
         if self._on_dismiss is not None:
-            self._on_dismiss()
+            call_handler(self._on_dismiss)
 
     def _handle_delete(self) -> None:
         self._cancel_timer()

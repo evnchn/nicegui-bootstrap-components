@@ -15,7 +15,7 @@ from .._base import (
     normalize_style,
     style_to_css,
 )
-from .._host import set_element_text
+from .._host import call_handler, set_element_text
 
 __all__ = [
     "Breadcrumb",
@@ -418,7 +418,7 @@ class _NavLinkImpl(BootstrapElement):
             return
         self._n_clicks += 1
         if self._on_click is not None:
-            self._on_click()
+            call_handler(self._on_click)
 
 
 class _BreadcrumbImpl(BootstrapElement):
@@ -538,7 +538,7 @@ class _PaginationImpl(BootstrapElement):
         self._active_page = clamped
         self._render_items()
         if self._on_change is not None:
-            self._on_change(clamped)
+            call_handler(self._on_change, clamped)
 
     def _render_items(self) -> None:
         clearer = getattr(self, "clear", None)
