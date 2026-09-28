@@ -6,6 +6,13 @@ on:
       - main
   workflow_dispatch:
 
+# Avoid transient PyPI slowdowns triggering resolver backtracking to legacy
+# pandas source distributions, which cannot build on the hosted runner.
+env:
+  PIP_DEFAULT_TIMEOUT: "60"
+  PIP_RETRIES: "5"
+  PIP_ONLY_BINARY: "pandas"
+
 permissions:
   contents: read
   pages: write
@@ -33,7 +40,7 @@ jobs:
       - name: Install package and extras
         run: |
           pip install -e ".[dev]"
-          pip install pandas mkdocs-material "mkdocstrings[python]"
+          pip install "pandas>=3.0,<4" mkdocs-material "mkdocstrings[python]"
 
       - name: MkDocs
         run: mkdocs build --strict
