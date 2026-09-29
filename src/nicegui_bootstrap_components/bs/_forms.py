@@ -277,7 +277,7 @@ class _FormTextImpl(BootstrapElement):
     ) -> None:
         self._surface = _surface
         self._structural_classes = tuple(form_text_classes(color=color))
-        super().__init__(children, tag="small", **kwargs)
+        super().__init__(children, tag="div", **kwargs)
 
 
 class _FormFeedbackImpl(BootstrapElement):

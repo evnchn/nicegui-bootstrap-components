@@ -6,9 +6,9 @@ from nicegui_bootstrap_components import StyleMode, bs, setup
 def demo() -> None:
     with bs.scope():
         bs.Tabs(
-            bs.Tab("Team"),
-            bs.Tab("Billing"),
-            bs.Tab("Audit log"),
+            bs.Tab("Team members and roles.", label="Team"),
+            bs.Tab("Plans and invoices.", label="Billing"),
+            bs.Tab("Recent account activity.", label="Audit log"),
             active_tab="Team",
         )
 

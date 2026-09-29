@@ -5,7 +5,8 @@ from nicegui_bootstrap_components import StyleMode, bs, setup
 
 def demo():
     with bs.scope(), bs.offcanvas(placement="end", is_open=True, backdrop=True):
-        ui.label("Inspector")
+        ui.label("Inspector").classes("h5")
+        ui.label("Details for the selected row appear here.")
         ui.button("Close details")
 
 

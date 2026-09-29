@@ -9,8 +9,8 @@ def demo() -> None:
 
     with bs.scope():
         bs.Tabs(
-            bs.Tab("Overview"),
-            bs.Tab("Settings"),
+            bs.Tab("Overview of your account.", label="Overview"),
+            bs.Tab("Adjust your preferences.", label="Settings"),
             active_tab="Overview",
             on_change=on_change,
         )

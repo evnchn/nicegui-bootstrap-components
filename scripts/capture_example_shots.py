@@ -253,6 +253,14 @@ def select_entries(args: argparse.Namespace) -> dict[str, dict[str, object]]:
     return wanted
 
 
+# Examples that only show their documented behaviour below a breakpoint.
+# Captured on a narrow viewport so the shot actually demonstrates it.
+NARROW_VIEWPORT_IDS = {
+    "responsive_sidebar": 500,
+    "responsive_collapsible_sidebar": 500,
+}
+
+
 def capture(base_url: str, entries: dict[str, dict[str, object]]) -> list[tuple[str, str]]:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     failures: list[tuple[str, str]] = []
@@ -260,16 +268,37 @@ def capture(base_url: str, entries: dict[str, dict[str, object]]) -> list[tuple[
         browser = pw.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 900, "height": 800}, device_scale_factor=2)
         page.emulate_media(reduced_motion="reduce")
+        previous_marker = ""
         for example_id in sorted(entries):
             route = str(entries[example_id]["route"])
             try:
+                narrow = NARROW_VIEWPORT_IDS.get(example_id)
+                if narrow is not None:
+                    page.set_viewport_size({"width": narrow, "height": 800})
+                else:
+                    page.set_viewport_size({"width": 900, "height": 800})
                 page.goto(base_url.rstrip("/") + route, wait_until="load", timeout=30000)
                 page.wait_for_function(
                     "() => {const c = document.querySelector('.nicegui-content');"
                     " return c && c.children.length > 0;}",
                     timeout=15000,
                 )
-                page.wait_for_timeout(1200)
+                # Wait for the new route's content: NiceGUI navigates as an SPA,
+                # so `load` may fire while the previous example is still painted.
+                # Poll until the content marker changes (or a timeout expires).
+                marker = ""
+                for _ in range(40):
+                    marker = str(
+                        page.evaluate(
+                            "() => {const c = document.querySelector('.nicegui-content');"
+                            " return c ? c.innerText.slice(0, 120) : '';}"
+                        )
+                    )
+                    if marker and marker != previous_marker:
+                        break
+                    page.wait_for_timeout(250)
+                previous_marker = marker
+                page.wait_for_timeout(1500)
                 box = page.evaluate(CONTENT_CLIP_JS)
                 target = OUT_DIR / f"{example_id}.png"
                 if box and box["width"] > 0 and box["height"] > 0:

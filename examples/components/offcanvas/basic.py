@@ -8,9 +8,11 @@ def demo():
         bs.scope(),
         bs.offcanvas(is_open=True, placement="start", backdrop=True).style("padding:24px"),
     ):
-        ui.label("Filters")
+        ui.label("Filters").classes("h5")
         ui.label("Search")
         ui.input()
+        bs.select(options=["All categories", "Books", "Games"], value="All categories")
+        ui.label("3,412 results match these filters.")
         ui.button("Apply")
 
 

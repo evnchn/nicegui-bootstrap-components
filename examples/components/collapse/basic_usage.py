@@ -4,9 +4,12 @@ from nicegui_bootstrap_components import StyleMode, bs, setup
 
 
 def demo():
-    with bs.scope(), bs.collapse(is_open=True):
-        ui.label("This panel is visible on first render.")
-        ui.label("Put any grouping content inside the collapse.")
+    with bs.scope():
+        panel = bs.collapse(is_open=True)
+        with panel:
+            ui.label("This panel is visible on first render.")
+            ui.label("Put any grouping content inside the collapse.")
+        bs.button("Toggle panel", on_click=panel.toggle)
 
 
 if __name__ in {"__main__", "__mp_main__"}:
