@@ -219,6 +219,13 @@ HOST_SCOPED = """/* Keep host flex defaults from changing Bootstrap grid roles. 
   padding: 0;
 }
 
+/* Scope islands stretch to the host width so percentage-sized children
+   (progress bars, placeholders) resolve against it instead of collapsing
+   when the host lays the island out as a flex item. */
+.ngbs {
+  width: 100%;
+}
+
 /* Overlay z-index policy is part of the scoped theme output. */
 """
 
@@ -228,6 +235,13 @@ HOST_UNSCOPED = """/* Keep host flex defaults from changing Bootstrap grid roles
 .col {
   gap: 0;
   padding: 0;
+}
+
+/* Scope islands stretch to the host width so percentage-sized children
+   (progress bars, placeholders) resolve against it instead of collapsing
+   when the host lays the island out as a flex item. */
+.ngbs {
+  width: 100%;
 }
 
 /* Overlay z-index policy is part of the scoped theme output. */

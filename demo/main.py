@@ -109,7 +109,7 @@ def _register_index_page(entries: list[ExampleEntry]) -> None:
 
 def main() -> None:
     """Start the examples demo service."""
-    setup(mode=StyleMode.MIXED)
+    setup(mode=StyleMode.MIXED, icons="bootstrap")
     register_examples([])
     ui.run(
         title="NiceGUI Bootstrap Components — Examples",

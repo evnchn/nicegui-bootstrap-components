@@ -5,8 +5,8 @@ from nicegui_bootstrap_components import StyleMode, bs, setup
 
 def demo() -> None:
     with bs.scope():
-        bs.placeholder(size="lg", color="secondary", animation="glow")
-        bs.placeholder(size="sm", color="secondary", animation="glow")
+        bs.placeholder(size="lg", color="secondary", animation="glow", xs=12)
+        bs.placeholder(size="sm", color="secondary", animation="glow", xs=12)
 
 
 if __name__ in {"__main__", "__mp_main__"}:

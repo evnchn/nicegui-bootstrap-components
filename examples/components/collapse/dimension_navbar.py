@@ -8,8 +8,13 @@ def demo():
         with bs.collapse(is_open=True, dimension="width"):
             ui.label("Revealed along the width axis.")
 
-        with bs.collapse(is_open=True, navbar=True, id="main-nav-collapse"):
-            ui.label("Navbar links go here.")
+        with bs.collapse(is_open=True, navbar=True, id="main-nav-collapse"), bs.nav():
+            with bs.nav_item():
+                bs.nav_link("Home", href="#", active=True)
+            with bs.nav_item():
+                bs.nav_link("Docs", href="#")
+            with bs.nav_item():
+                bs.nav_link("Blog", href="#")
 
 
 if __name__ in {"__main__", "__mp_main__"}:

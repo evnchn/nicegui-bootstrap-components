@@ -6,8 +6,8 @@ from nicegui_bootstrap_components import StyleMode, bs, setup
 def demo() -> None:
     with bs.scope():
         bs.Tabs(
-            bs.Tab("Day"),
-            bs.Tab("Week"),
+            bs.Tab("Day view content.", label="Day"),
+            bs.Tab("Week view content.", label="Week"),
             card=True,
             active_tab="Day",
         )

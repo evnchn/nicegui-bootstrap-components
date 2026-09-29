@@ -270,6 +270,11 @@ def _make_surface_init(impl_cls: type, surface: str) -> Callable[..., None]:
 
     def __init__(self: Any, children: object = None, *args: Any, **props: Any) -> None:
         init_fn = impl_init
+        if args:
+            # Multiple positional children arrive as one tuple instead of
+            # silently dropping every child after the first.
+            rest = tuple(args)
+            children = (children, *rest) if children is not None else rest
         if value_first:
             init_fn(self, props.pop("value", None), children=children, _surface=surface, **props)
         else:

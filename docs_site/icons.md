@@ -34,7 +34,7 @@ setup(mode="mixed", icons=BOOTSTRAP)
 of, not in addition to, Bootstrap Icons. Pick one set per process so class
 names and font files stay consistent across pages.
 
-`None` leaves the process default in place. Call `setup` before serving
+`None` disables the icon stylesheet entirely. Call `setup` before serving
 pages; later pages reuse the same injected icon sheet.
 
 ## Bundled copies and CDN twins
