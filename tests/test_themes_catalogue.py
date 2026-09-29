@@ -101,3 +101,13 @@ def test_setup_without_icons_does_not_inject_icon_stylesheet(
     monkeypatch.setattr(assets, "add_static_files", lambda *_args, **_kwargs: None)
     setup(icons=None)
     assert not any("ngbs-icons-" in value for value in imports)
+
+
+def test_setup_defaults_to_bootstrap_icons(monkeypatch: pytest.MonkeyPatch) -> None:
+    from nicegui_bootstrap_components import assets
+
+    imports: list[str] = []
+    monkeypatch.setattr(assets, "add_head_html", lambda code, **_kwargs: imports.append(code))
+    monkeypatch.setattr(assets, "add_static_files", lambda *_args, **_kwargs: None)
+    setup()
+    assert any("ngbs-icons-bootstrap.css" in value for value in imports)

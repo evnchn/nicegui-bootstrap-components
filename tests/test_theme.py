@@ -115,7 +115,7 @@ def test_setup_unscoped_cdn_injects_import(monkeypatch: pytest.MonkeyPatch) -> N
 
     monkeypatch.setattr(assets, "add_head_html", capture_head)
     monkeypatch.setattr(assets, "add_static_files", lambda *_a, **_k: None)
-    setup(mode=StyleMode.UNSCOPED, cdn=True, theme=themes.FLATLY)
+    setup(mode=StyleMode.UNSCOPED, cdn=True, theme=themes.FLATLY, icons=None)
     from nicegui_bootstrap_components.assets import get_asset_manager
 
     manager = get_asset_manager()

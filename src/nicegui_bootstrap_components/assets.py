@@ -305,16 +305,18 @@ def setup(
     mode: StyleMode = StyleMode.MIXED,
     *,
     theme: _themes.Theme | str = _themes.BOOTSTRAP,
-    icons: Literal["bootstrap", "fontawesome"] | _icons.IconTheme | None = None,
+    icons: Literal["bootstrap", "fontawesome"] | _icons.IconTheme | None = "bootstrap",
     color_mode: str | None = "auto",
     cdn: bool = False,
     follow_nicegui_dark: bool = True,
 ) -> None:
     """Register library CSS once (process-wide).
 
-    Idempotent when called again with the same arguments. Raises ``ValueError``
-    on a conflicting mode or option, or when Mode B (scoped) is combined with
-    ``cdn=True``. Does not bind to a client.
+    ``icons`` defaults to Bootstrap Icons; pass ``icons=None`` to skip the
+    icon stylesheet entirely. Idempotent when called again with the same
+    arguments. Raises ``ValueError`` on a conflicting mode or option, or
+    when Mode B (scoped) is combined with ``cdn=True``. Does not bind to
+    a client.
     """
     global _MANAGER
     if not isinstance(mode, StyleMode):
