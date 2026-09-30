@@ -109,6 +109,7 @@ def demo() -> None:
                 species = bs.select(
                     options=["all", "setosa", "versicolor", "virginica"],
                     value="all",
+                    on_change=lambda *_: render(),
                 )
             with bs.col(md=4):
                 bs.label("k")
@@ -141,9 +142,35 @@ def demo() -> None:
                     plot.figure.tight_layout()
                     plot.update()
                 else:
-                    with bs.table():
-                        for row, lab in zip(rows, labels, strict=True):
-                            bs.label(f"{row[4]} cluster {lab}")
+                    with bs.table(striped=True, hover=True, responsive=True):
+                        with ui.element("thead"), ui.element("tr"):
+                            ui.html("Cluster", tag="th")
+                            ui.html("Species", tag="th")
+                            ui.html("Rows", tag="th")
+                            ui.html("Mean petal length", tag="th")
+                            ui.html("Mean petal width", tag="th")
+                        with ui.element("tbody"):
+                            for cluster in range(k):
+                                members = [
+                                    (row, lab)
+                                    for row, lab in zip(rows, labels, strict=True)
+                                    if lab == cluster
+                                ]
+                                if not members:
+                                    continue
+                                species_in_cluster = sorted({row[4] for row, _lab in members})
+                                with ui.element("tr"):
+                                    ui.html(str(cluster), tag="td")
+                                    ui.html(", ".join(species_in_cluster), tag="td")
+                                    ui.html(str(len(members)), tag="td")
+                                    ui.html(
+                                        f"{sum(r[2] for r, _lab in members) / len(members):.2f}",
+                                        tag="td",
+                                    )
+                                    ui.html(
+                                        f"{sum(r[3] for r, _lab in members) / len(members):.2f}",
+                                        tag="td",
+                                    )
 
         bs.button("Cluster", on_click=render)
         render()
