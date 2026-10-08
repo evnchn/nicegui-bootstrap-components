@@ -183,8 +183,8 @@ pip install -e ".[dev]"
 pytest
 ```
 
-`python -m playwright install chromium`. At 0.1.0, the default run carries
-545 tests plus the Playwright browser suite and the visual matrix; mypy and
+`python -m playwright install chromium`. At 0.1.1, the default run carries
+654 passing tests plus the Playwright browser suite and the visual matrix; mypy and
 ruff are clean. CI runs three GitHub Actions jobs (checks, docs, browser). The
 browser suite uses real Chromium. Every Python block in the docs and every
 example is executed by tests, so a snippet that cannot run fails CI.
@@ -195,5 +195,5 @@ MIT. See [LICENSE](LICENSE).
 
 ## Status
 
-0.1.0, first public release. Matches the dash-bootstrap-components 2.0.4 API for the
+0.1.1, maintenance release. Matches the dash-bootstrap-components 2.0.4 API for the
 component set listed above.

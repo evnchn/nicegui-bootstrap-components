@@ -2,7 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
-## [0.1.0] - unreleased
+## [0.1.1] - 2026-10-09
+
+### Fixed
+
+- Allow text labels in Bootstrap context-manager composition without rejecting valid child elements.
+- Add opt-in `Stack(wrap=True)` support for narrow responsive layouts.
+- Add regression coverage and clarify composition/setup behavior in the documentation.
+
+## [0.1.0] - 2026-09-26
 
 ### Added
 
