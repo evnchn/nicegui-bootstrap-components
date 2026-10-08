@@ -37,6 +37,7 @@ from nicegui_bootstrap_components.bs._forms import (
     label,
     label_classes,
 )
+from nicegui_bootstrap_components.bs._inputs import DbcInput, Input
 
 pytest_plugins = ["nicegui.testing.plugin"]
 pytestmark = pytest.mark.user
@@ -219,3 +220,18 @@ async def test_input_group_text_renders(user: User) -> None:
 
     await user.open("/")
     await user.should_see("kg")
+
+
+async def test_input_password_type_reaches_native_attribute(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    inputs: list[Input] = []
+
+    @ui.page("/")
+    def page() -> None:
+        inputs.append(Input(type="password", placeholder="Password"))
+        inputs.append(DbcInput(type="password", placeholder="Password"))
+
+    await user.open("/")
+    for element in inputs:
+        assert element.tag == "input"
+        assert element._props["type"] == "password"

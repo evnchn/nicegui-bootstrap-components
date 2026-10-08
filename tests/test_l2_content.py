@@ -13,7 +13,11 @@ from nicegui import ui
 from nicegui.testing import User
 
 from nicegui_bootstrap_components import StyleMode, setup
-from nicegui_bootstrap_components._base import PropConflictError, UnsupportedPropError
+from nicegui_bootstrap_components._base import (
+    ChildrenError,
+    PropConflictError,
+    UnsupportedPropError,
+)
 from nicegui_bootstrap_components.bs._content import (
     Badge,
     Card,
@@ -560,3 +564,54 @@ async def test_table_from_dataframe(user: User) -> None:
     await user.open("/")
     await user.should_see("a")
     await user.should_see("1")
+
+
+@pytest.mark.user
+async def test_card_header_label_with_context_manager(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+
+    @ui.page("/")
+    def page() -> None:
+        with card():
+            with card_header("Approval"):
+                Badge("HOD", color="primary")
+            with card_body():
+                Badge("Pending", color="warning")
+
+    await user.open("/")
+    await user.should_see("Approval")
+    await user.should_see("HOD")
+    await user.should_see("Pending")
+
+
+@pytest.mark.user
+async def test_card_region_chain_with_labels_does_not_raise(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+
+    @ui.page("/")
+    def page() -> None:
+        with card(), card_header("HeaderTitle"), card_body():
+            Badge("BodyChild")
+
+    await user.open("/")
+    await user.should_see("HeaderTitle")
+    await user.should_see("BodyChild")
+
+
+@pytest.mark.user
+async def test_card_element_children_context_manager_raises(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    errors: list[ChildrenError] = []
+
+    @ui.page("/")
+    def page() -> None:
+        header = CardHeader(ui.element("span"))
+        try:
+            with header:
+                pass
+        except ChildrenError as exc:
+            errors.append(exc)
+
+    await user.open("/")
+    assert errors, "element children with a context manager must raise ChildrenError"
+    assert "context manager" in str(errors[0])

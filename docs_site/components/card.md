@@ -28,6 +28,29 @@ media. `overlay=True` on `CardImg` is the image-side flag for that layout.
 `CardLink` is a link styled for use inside the body; it supports `href`,
 `external_link`, `on_click`, and `n_clicks`.
 
+### Region labels and context managers
+
+The region helpers accept a text label as their first positional argument and
+can still be used as context managers. The label renders first and elements
+created in the `with` block are appended after it:
+
+```python
+from nicegui_bootstrap_components import bs
+
+with bs.card():
+    with bs.card_header("Approval"):
+        bs.badge("HOD", color="primary")
+    with bs.card_body():
+        bs.button("Approve", color="success")
+```
+
+Compose regions as siblings by nesting one `with` block per region. Do not
+chain them in a single statement such as
+`with bs.card(), bs.card_header("x"), bs.card_body():` — Python nests each
+context manager inside the previous one, so the body would be nested inside
+the header. Element children passed to the constructor are still rejected when
+the same element is used with `with` (a `ChildrenError` names the fix).
+
 ## Colored and outline cards
 
 `color` applies a contextual background. `outline=True` keeps a colored border

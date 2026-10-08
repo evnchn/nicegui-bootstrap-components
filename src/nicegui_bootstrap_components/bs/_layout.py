@@ -211,8 +211,17 @@ def col_breakpoint_classes(
     return classes
 
 
-def stack_classes(*, direction: str = "vertical", gap: int | None = None) -> list[str]:
-    """Return Bootstrap ``vstack``/``hstack`` classes."""
+def stack_classes(
+    *,
+    direction: str = "vertical",
+    gap: int | None = None,
+    wrap: bool = False,
+) -> list[str]:
+    """Return Bootstrap ``vstack``/``hstack`` classes.
+
+    ``wrap=True`` adds the ``flex-wrap`` utility so long rows flow onto the
+    next line instead of overflowing their container.
+    """
     if direction not in _STACK_DIRECTIONS:
         raise ValueError(f"Invalid stack direction: {direction!r}")
     classes = ["vstack" if direction == "vertical" else "hstack"]
@@ -220,6 +229,8 @@ def stack_classes(*, direction: str = "vertical", gap: int | None = None) -> lis
         if isinstance(gap, bool) or not isinstance(gap, int) or gap < 0 or gap > 5:
             raise ValueError(f"gap must be an int 0-5, got {gap!r}")
         classes.append(f"gap-{gap}")
+    if wrap:
+        classes.append("flex-wrap")
     return classes
 
 
@@ -324,10 +335,11 @@ class _StackImpl(BootstrapElement):
         _surface: str,
         direction: str = "vertical",
         gap: int | None = None,
+        wrap: bool = False,
         **kwargs: Any,
     ) -> None:
         self._surface = _surface
-        self._structural_classes = tuple(stack_classes(direction=direction, gap=gap))
+        self._structural_classes = tuple(stack_classes(direction=direction, gap=gap, wrap=wrap))
         super().__init__(children, **kwargs)
 
 

@@ -78,6 +78,14 @@ holds those defaults and performs the injection; application code should
 not construct `AssetManager` itself. Per-client theme state lives on
 `ThemeController` (`ensure_theme_bound`, `get_asset_manager`).
 
+`setup()` creates no UI elements. It only queues shared `<head>` HTML and
+registers static files, so calling it at import time — before any page exists —
+is safe and does not switch NiceGUI into script mode or trigger its
+"elements were created outside of a page context" warning. Page-scoped CSS you
+add through NiceGUI directly (`ui.add_css(...)`,
+`ui.add_head_html(..., shared=False)`) is different: those calls bind to the
+current client and must run inside a page function or another client context.
+
 ## Injected style blocks
 
 Mixed mode injects layered CSS into the page as `<style>` blocks (and,

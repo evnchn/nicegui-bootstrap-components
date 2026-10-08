@@ -132,6 +132,22 @@ def test_setup_rejects_invalid_color_mode() -> None:
         setup(color_mode="grey")
 
 
+def test_setup_before_pages_does_not_create_elements(monkeypatch: pytest.MonkeyPatch) -> None:
+    from nicegui import core
+
+    from nicegui_bootstrap_components import assets
+
+    monkeypatch.setattr(assets, "add_head_html", lambda *_a, **_k: None)
+    monkeypatch.setattr(assets, "add_static_files", lambda *_a, **_k: None)
+    monkeypatch.setattr(core, "script_mode", False)
+    monkeypatch.setattr(core, "script_client", None)
+
+    setup(mode=StyleMode.MIXED)
+
+    assert core.script_mode is False, "setup() must not create elements before pages exist"
+    assert core.script_client is None
+
+
 def test_setup_rejects_later_argument_conflicts(monkeypatch: pytest.MonkeyPatch) -> None:
     from nicegui_bootstrap_components import assets
 

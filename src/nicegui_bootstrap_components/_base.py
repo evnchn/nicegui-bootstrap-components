@@ -230,6 +230,19 @@ def _normalize_children(children: object) -> list[object]:
     raise TypeError(f"Unsupported child type: {type(children)!r}")
 
 
+def _children_are_label(children: object) -> bool:
+    """Return True when ``children`` are only text/number labels, no elements.
+
+    Labels may be combined with the context manager form because NiceGUI
+    appends elements created inside the ``with`` block after the label.
+    """
+    if isinstance(children, (str, int, float)):
+        return True
+    if isinstance(children, (list, tuple)):
+        return all(isinstance(child, (str, int, float)) for child in children)
+    return False
+
+
 def _would_cycle(child: Any, new_parent: Any) -> bool:
     if child is new_parent:
         return True
@@ -365,9 +378,13 @@ class BootstrapElementMixin:
     _surface: str
 
     def __enter__(self) -> Any:
-        if getattr(self, "_children_explicit", False):
+        if getattr(self, "_children_explicit", False) and not getattr(
+            self, "_children_label_only", False
+        ):
             raise ChildrenError(
-                "Passing children= is not supported when the element is used as a context manager"
+                "Passing element children= is not supported when the element is used as a "
+                "context manager; pass a text label positionally or create the children "
+                "inside the with block"
             )
         enter = getattr(super(), "__enter__", None)
         if enter is None:
@@ -394,6 +411,7 @@ class BootstrapElementMixin:
             self._surface = "native"
         self._ambient_parent = get_slot_parent()
         self._children_explicit = children is not None
+        self._children_label_only = _children_are_label(children)
         shared = prepare_shared_props(
             self._surface,
             props,

@@ -27,6 +27,14 @@ def test_stack_classes() -> None:
     for n in range(6):
         assert stack_classes(gap=n) == ["vstack", f"gap-{n}"]
     assert stack_classes(direction="horizontal", gap=2) == ["hstack", "gap-2"]
+    assert stack_classes(wrap=True) == ["vstack", "flex-wrap"]
+    assert stack_classes(direction="horizontal", wrap=True) == ["hstack", "flex-wrap"]
+    assert stack_classes(direction="horizontal", gap=2, wrap=True) == [
+        "hstack",
+        "gap-2",
+        "flex-wrap",
+    ]
+    assert stack_classes(direction="horizontal", wrap=False) == ["hstack"]
     with pytest.raises(ValueError):
         stack_classes(direction="diagonal")
     with pytest.raises(ValueError):
@@ -97,6 +105,18 @@ async def test_button_group_renders_two_buttons(user: User) -> None:
     await user.should_see("GroupTwo")
 
 
+async def test_button_label_with_context_manager(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+
+    @ui.page("/")
+    def page() -> None:
+        with Button("Alarm", color="primary"):
+            ui.element("i").classes("bi bi-alarm me-2")
+
+    await user.open("/")
+    await user.should_see("Alarm")
+
+
 async def test_horizontal_stack_renders_label(user: User) -> None:
     setup(mode=StyleMode.MIXED)
 
@@ -106,3 +126,15 @@ async def test_horizontal_stack_renders_label(user: User) -> None:
 
     await user.open("/")
     await user.should_see("HorizontalLabel")
+
+
+async def test_horizontal_stack_wrap_class(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    stacks: list[Stack] = []
+
+    @ui.page("/")
+    def page() -> None:
+        stacks.append(Stack(direction="horizontal", gap=2, wrap=True))
+
+    await user.open("/")
+    assert "flex-wrap" in stacks[0]._classes

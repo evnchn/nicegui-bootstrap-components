@@ -36,6 +36,14 @@ ui.run()
 `bs.button` is the native surface. The compatibility surface (`dbc`) follows the
 same component set with dash-bootstrap-components prop names.
 
+!!! note
+    `setup()` is safe to call at import time, before any `@ui.page` function
+    has run: it registers shared head HTML and static files but creates no
+    NiceGUI elements, so the host does not switch into script mode. Page-level
+    CSS you add yourself with `ui.add_css`/`ui.add_head_html` (without
+    `shared=True`) must still run inside a page function or another client
+    context.
+
 ## Style modes
 
 **Scoped.** `with bs.scope():` marks a Bootstrap island. Styles apply inside

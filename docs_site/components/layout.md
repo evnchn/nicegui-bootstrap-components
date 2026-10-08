@@ -114,6 +114,19 @@ Use `direction="horizontal"` for horizontal layouts.
 
 {{example:examples/components/layout/horizontal_stack.py:demo}}
 
+A horizontal stack keeps its items on one line and overflows its container when
+they do not fit. Pass `wrap=True` to add Bootstrap's `flex-wrap` utility so the
+items flow onto the next line; this is the usual choice for rows of links or
+badges on narrow screens:
+
+```python
+from nicegui_bootstrap_components import bs
+
+with bs.stack(direction="horizontal", wrap=True, gap=2):
+    bs.badge("One")
+    bs.badge("Two")
+```
+
 Combine stacks with Bootstrap's spacing utilities for finer control. Here the
 middle item is pushed away from its neighbours with `ms-auto` and `mx-auto`:
 
