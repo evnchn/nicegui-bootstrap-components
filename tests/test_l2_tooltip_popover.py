@@ -6,7 +6,7 @@ import pytest
 from nicegui import ui
 from nicegui.testing import User
 
-from nicegui_bootstrap_components import StyleMode, setup
+from nicegui_bootstrap_components import StyleMode, bs, setup
 from nicegui_bootstrap_components._base import UnsupportedPropError
 from nicegui_bootstrap_components.bs._overlay_root import ensure_overlay_root
 from nicegui_bootstrap_components.bs._tooltip_popover import (
@@ -296,3 +296,58 @@ async def test_popover_portals_to_overlay_root(user: User) -> None:
         assert root in _overlay_ancestors(pop)
 
     await user.open("/")
+
+
+@pytest.mark.user
+@pytest.mark.parametrize("by_public_id", [False, True])
+async def test_anchor_js_uses_real_dom_ids(user: User, by_public_id: bool) -> None:
+    setup(mode=StyleMode.MIXED)
+    sent: list[str] = []
+    holder: dict = {}
+
+    @ui.page("/")
+    def page() -> None:
+        client = ui.context.client
+        orig = client.outbox.enqueue_message
+
+        def spy(message_type, data, target_id):  # type: ignore[no-untyped-def]
+            if message_type == "run_javascript" and "var htmlId" in str(data.get("code", "")):
+                sent.append(data["code"])
+            return orig(message_type, data, target_id)
+
+        client.outbox.enqueue_message = spy  # type: ignore[method-assign]
+        holder["btn"] = bs.Button("B", id="pub-anchor")
+        target = "pub-anchor" if by_public_id else holder["btn"]
+        holder["tip"] = Tooltip("tip", target=target, is_open=True)
+
+    await user.open("/")
+    await user.should_see("tip")
+    assert sent
+    assert "None" not in sent[0]
+    assert f'var htmlId="c{holder["tip"].id}";' in sent[0]
+    assert f'var targetId="c{holder["btn"].id}";' in sent[0]
+
+
+@pytest.mark.user
+async def test_anchor_js_accepts_raw_dom_id_target(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    sent: list[str] = []
+
+    @ui.page("/")
+    def page() -> None:
+        client = ui.context.client
+        orig = client.outbox.enqueue_message
+
+        def spy(message_type, data, target_id):  # type: ignore[no-untyped-def]
+            if message_type == "run_javascript" and "var htmlId" in str(data.get("code", "")):
+                sent.append(data["code"])
+            return orig(message_type, data, target_id)
+
+        client.outbox.enqueue_message = spy  # type: ignore[method-assign]
+        ui.button("Anchor").props("id=raw-anchor")
+        Tooltip("tip", target="raw-anchor", is_open=True)
+
+    await user.open("/")
+    await user.should_see("tip")
+    assert sent
+    assert 'var targetId="raw-anchor";' in sent[-1]

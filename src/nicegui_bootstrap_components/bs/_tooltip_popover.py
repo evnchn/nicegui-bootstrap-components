@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from nicegui.element import Element
 
 from .._base import BootstrapElement, UnsupportedPropError, lookup_public_id, make_surface_classes
-from .._host import is_deleted, set_element_text
+from .._host import html_id, is_deleted, set_element_text
 from ._overlays import _portal_to_overlay_root
 
 __all__ = [
@@ -209,22 +210,24 @@ def _assign_plain_children(element: Any, children: object) -> None:
         mover(element)
 
 
-def _target_html_id(target: str | Any) -> str:
+def _dom_id(element: Any) -> str:
+    return str(element._props.get("id") or html_id(element))
+
+
+def _target_html_id(target: str | Any, client: Any = None) -> str:
     if isinstance(target, str):
-        return target
-    props = getattr(target, "_props", None)
-    if isinstance(props, dict) and props.get("id"):
-        return str(props.get("id"))
-    return ""
+        found = lookup_public_id(target, client=client)
+        return target if found is None else _dom_id(found)
+    return _dom_id(target) if target is not None else ""
 
 
-def _anchor_javascript(vue_id: object, html_id: object, target_id: str, placement: str) -> str:
+def _anchor_javascript(vue_id: object, overlay_id: str, target_id: str, placement: str) -> str:
     return (
         "(function(){"
-        f"var placement={placement!r};"
-        f"var targetId={target_id!r};"
-        f"var vueId={vue_id!r};"
-        f"var htmlId={html_id!r};"
+        f"var placement={json.dumps(placement)};"
+        f"var targetId={json.dumps(target_id)};"
+        f"var vueId={json.dumps(vue_id)};"
+        f"var htmlId={json.dumps(overlay_id)};"
         "var el=null;"
         "if(htmlId){el=document.getElementById(String(htmlId));}"
         "try{if(!el && typeof getElement==='function'){el=getElement(vueId);}}catch(e){}"
@@ -259,14 +262,10 @@ def _position_to_target(overlay: Any) -> None:
     if not callable(run_js):
         return
     target = getattr(overlay, "target", None)
-    target_id = _target_html_id(target)
-    props = getattr(overlay, "_props", None)
-    html_id: object = None
-    if isinstance(props, dict):
-        html_id = props.get("id")
+    target_id = _target_html_id(target, client)
     script = _anchor_javascript(
         getattr(overlay, "id", None),
-        html_id,
+        _dom_id(overlay),
         target_id,
         str(getattr(overlay, "placement", "auto")),
     )
