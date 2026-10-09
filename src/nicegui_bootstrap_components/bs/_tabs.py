@@ -470,9 +470,11 @@ class _TabsImpl(BootstrapElement):
         if self._lazy and not selected:
             if tab not in self._lazy_held:
                 self._lazy_held.append(tab)
+            _set_class(tab, "d-none", True)
             return
         if tab in self._lazy_held:
             self._lazy_held.remove(tab)
+        _set_class(tab, "d-none", False)
         tab.move(self._content)
         _set_class(tab, "active", selected)
 

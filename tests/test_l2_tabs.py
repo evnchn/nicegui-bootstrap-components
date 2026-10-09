@@ -218,3 +218,21 @@ async def test_tabs_dynamic_insert_remove(user: User) -> None:
     assert widget.active_tab == "tab-0"
     await user.should_see("A")
     await user.should_see("C")
+
+
+async def test_tabs_lazy_inactive_pane_hidden_until_activated(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    holder: list[Tabs] = []
+
+    @ui.page("/")
+    def page() -> None:
+        holder.append(Tabs([Tab(label="A", tab_id="a"), Tab(label="B", tab_id="b")], lazy=True))
+
+    await user.open("/")
+    widget = holder[0]
+    pane_b = widget._find_tab("b")
+    assert pane_b is not None
+    assert "d-none" in pane_b.classes
+    widget._on_tab_click("b")
+    assert "d-none" not in pane_b.classes
+    assert "active" in pane_b.classes
