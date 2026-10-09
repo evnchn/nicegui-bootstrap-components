@@ -298,6 +298,20 @@ def configure_and_register(mode: str) -> None:
                 class_name="probe-toast-stay",
             )
 
+    @ui.page("/hidden-on-load")
+    def hidden_on_load() -> None:
+        ui.add_head_html(DARK_WATCHER_HTML)
+        with bs.scope() if mixed else nullcontext():
+            log = ui.label("")
+            log.props("id=hidden-log")
+
+            def hidden(name: str) -> None:
+                log.set_text(f"{log.text},{name}" if log.text else name)
+
+            modal = bs.Modal(bs.ModalBody("hol-body"), on_hidden=lambda: hidden("m"))
+            bs.Offcanvas(title="hol-oc", on_hidden=lambda: hidden("o"))
+            ui.button("open", on_click=modal.open).props("id=btn-hol-open")
+
     @ui.page("/clicks")
     def clicks() -> None:
         ui.add_head_html(DARK_WATCHER_HTML)

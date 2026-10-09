@@ -568,7 +568,7 @@ _OVERLAY_JS = r"""
   }
 
   function hideModal(el) {
-    if (el._ngbsPhase === 'closed' || el._ngbsPhase === 'closing') {
+    if (!el._ngbsPhase || el._ngbsPhase === 'closed' || el._ngbsPhase === 'closing') {
       el._ngbsDesired = false;
       removeBackdrop(el);
       unlockBodyScroll(el);
@@ -649,7 +649,7 @@ _OVERLAY_JS = r"""
   }
 
   function hideOffcanvas(el) {
-    if (el._ngbsPhase === 'closed') {
+    if (!el._ngbsPhase || el._ngbsPhase === 'closed') {
       el._ngbsDesired = false;
       removeBackdrop(el);
       el.style.removeProperty('visibility');
