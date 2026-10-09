@@ -218,3 +218,25 @@ async def test_tabs_dynamic_insert_remove(user: User) -> None:
     assert widget.active_tab == "tab-0"
     await user.should_see("A")
     await user.should_see("C")
+
+
+async def test_two_tabs_have_unique_dom_ids(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    holder: list[Tabs] = []
+
+    @ui.page("/")
+    def page() -> None:
+        holder.append(Tabs([Tab("A1", label="A1"), Tab("A2", label="A2")]))
+        holder.append(Tabs([Tab("B1", label="B1"), Tab("B2", label="B2")]))
+
+    await user.open("/")
+    first, second = holder
+    assert first.tab_ids == second.tab_ids == ["tab-0", "tab-1"]
+    all_ids = []
+    for widget in holder:
+        pane_ids = {t.tab_id: t._props["id"] for t in widget._tabs}
+        for tab_id, button in widget._buttons.items():
+            assert button._props["aria-controls"] == pane_ids[tab_id]
+            all_ids.append(button._props["id"])
+        all_ids.extend(pane_ids.values())
+    assert len(all_ids) == len(set(all_ids))
