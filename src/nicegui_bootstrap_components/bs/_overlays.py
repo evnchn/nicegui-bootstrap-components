@@ -334,7 +334,7 @@ _OVERLAY_JS = r"""
   }
 
   function dispatch(el, type) {
-    try { el.dispatchEvent(new CustomEvent(type, { bubbles: true })); } catch (err) {}
+    try { el.dispatchEvent(new CustomEvent(type, { bubbles: false })); } catch (err) {}
   }
 
   var backdropSequence = 0;
