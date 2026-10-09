@@ -596,6 +596,21 @@ async def test_theme_controller_sets_data_bs_theme(server: str) -> None:
         )
 
 
+async def test_late_theme_controller_runtime_executes(server: str) -> None:
+    async with _chromium() as page:
+        await _goto(page, server, "/late", "#btn-late")
+        await page.locator("#btn-late").click()
+        await page.wait_for_selector(".ngbs[data-bs-theme]", state="attached", timeout=_WAIT)
+        await page.wait_for_function(
+            "() => typeof window.ngbsSetColorMode === 'function'", timeout=_WAIT
+        )
+        await page.wait_for_function(
+            """() => document.querySelector('.ngbs[data-bs-theme]')
+              ?.getAttribute('data-bs-theme') === 'dark'""",
+            timeout=_WAIT,
+        )
+
+
 async def test_theme_controller_unscoped_changes_document_theme(server_unscoped: str) -> None:
     async with _chromium() as page:
         await _goto(page, server_unscoped, "/theme", "#btn-theme-dark")
