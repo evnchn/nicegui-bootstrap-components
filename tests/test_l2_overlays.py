@@ -287,3 +287,37 @@ async def test_accordion_renders(user: User) -> None:
 
     await user.open("/")
     await user.should_see("ngbs-accordion-hello")
+
+
+async def test_accordion_default_dom_ids_are_unique(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    items: list[AccordionItem] = []
+
+    @ui.page("/")
+    def page() -> None:
+        for title in ("one", "two"):
+            with Accordion():
+                items.append(AccordionItem(title=title))
+
+    await user.open("/")
+    assert [i.item_id for i in items] == ["item-0", "item-0"]
+    dom_ids = []
+    for item in items:
+        assert item._button._props["aria-controls"] == item._collapse._props["id"]
+        assert item._collapse._props["aria-labelledby"] == item._header._props["id"]
+        dom_ids += [item._collapse._props["id"], item._header._props["id"]]
+    assert len(dom_ids) == len(set(dom_ids))
+
+
+async def test_accordion_explicit_item_id_is_dom_id(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    items: list[AccordionItem] = []
+
+    @ui.page("/")
+    def page() -> None:
+        with Accordion():
+            items.append(AccordionItem(title="FAQ", item_id="faq"))
+
+    await user.open("/")
+    assert items[0]._collapse._props["id"] == "faq-collapse"
+    assert items[0]._header._props["id"] == "faq-header"

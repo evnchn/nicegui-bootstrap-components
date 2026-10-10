@@ -237,7 +237,7 @@ def _pane_dom_id(tab: Any) -> str:
     current = tab._props.get("id")
     if isinstance(current, str) and current:
         return current
-    assigned = tab.tab_id or "tab"
+    assigned = tab._explicit_tab_id or f"ngbs-{tab.id}"
     tab._props["id"] = assigned
     return assigned
 
@@ -529,8 +529,9 @@ class _TabsImpl(BootstrapElement):
                 continue
             selected = tab_id == self._active_tab
             pane_id = _pane_dom_id(tab)
+            dom_tab_id = tab._explicit_tab_id or f"ngbs-{tab.id}"
             for key, value in tab_pane_aria(
-                tab_id=tab_id,
+                tab_id=dom_tab_id,
                 pane_id=pane_id,
                 selected=selected,
             ).items():
@@ -541,7 +542,7 @@ class _TabsImpl(BootstrapElement):
             if btn is None:
                 continue
             for key, value in tab_button_aria(
-                tab_id=tab_id,
+                tab_id=dom_tab_id,
                 pane_id=pane_id,
                 selected=selected,
                 disabled=tab.disabled,

@@ -2283,6 +2283,7 @@ class _AccordionItemImpl(_SlotRedirect, BootstrapElement):
         self._surface = surface
         self.classes("accordion-item")
         self._item_id = item_id
+        self._explicit_item_id = item_id
         self._expanded = False
         with self:
             self._header = ui.element("h2").classes("accordion-header")
@@ -2313,7 +2314,7 @@ class _AccordionItemImpl(_SlotRedirect, BootstrapElement):
         return self._item_id
 
     def _bind_accordion_ids(self) -> None:
-        ident = self._item_id or "item"
+        ident = self._explicit_item_id or f"ngbs-{self.id}"
         collapse_id = f"{ident}-collapse"
         header_id = f"{ident}-header"
         self._header._props["id"] = header_id
