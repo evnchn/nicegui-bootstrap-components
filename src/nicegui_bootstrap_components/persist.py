@@ -160,7 +160,7 @@ def _click_handler(
 ) -> Callable[..., None]:
     def _handler(*_args: Any, **_kwargs: Any) -> None:
         if on_click is not None:
-            on_click()
+            _host.call_handler(on_click)
         if navigate_to is not None:
             from nicegui import ui
 
