@@ -337,6 +337,20 @@ async def test_dropdown_outside_click_esc(server: str) -> None:
         )
 
 
+async def test_never_opened_overlays_do_not_fire_hidden_on_load(server: str) -> None:
+    async with _chromium() as page:
+        await _goto(page, server, "/hidden-on-load", "#btn-hol-open")
+        await page.wait_for_timeout(1500)
+        log = page.locator("#hidden-log")
+        await expect(log).to_have_text("")
+        await page.locator("#btn-hol-open").click()
+        await expect(page.locator(".modal.show")).to_be_visible(timeout=_WAIT)
+        await page.keyboard.press("Escape")
+        await expect(log).to_have_text("m", timeout=_WAIT)
+        await page.wait_for_timeout(500)
+        await expect(log).to_have_text("m")
+
+
 async def test_toast_duration_autohide(server: str) -> None:
     async with _chromium() as page:
         await _goto(page, server, "/toasts", ".probe-toast-stay")
