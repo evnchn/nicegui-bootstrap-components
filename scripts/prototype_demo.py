@@ -280,6 +280,19 @@ def configure_and_register(mode: str) -> None:
         )
         swap.props("id=btn-theme-swap")
 
+    @ui.page("/late")
+    def late_page() -> None:
+        from nicegui_bootstrap_components import ThemeController
+
+        holder = ui.column()
+
+        def create() -> None:
+            with holder, bs.scope():
+                bs.button("Late button")
+            ThemeController.for_client().set_color_mode("dark")
+
+        ui.button("Create late", on_click=create).props("id=btn-late")
+
     @ui.page("/toasts")
     def toasts() -> None:
         ui.add_head_html(DARK_WATCHER_HTML)

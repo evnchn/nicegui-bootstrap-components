@@ -117,7 +117,13 @@ def add_head_html(
     if client is not None:
         if getattr(client, "_response_built", False) and not getattr(client, "is_deleted", False):
             client.run_javascript(
-                f'document.head.insertAdjacentHTML("beforeend", {json.dumps(html)});'
+                "const t = document.createElement('template');"
+                f"t.innerHTML = {json.dumps(html)};"
+                "t.content.querySelectorAll('script').forEach((o) => {"
+                "const n = document.createElement('script');"
+                "for (const a of o.attributes) n.setAttribute(a.name, a.value);"
+                "n.textContent = o.textContent; o.replaceWith(n); });"
+                "document.head.append(t.content);"
             )
         client._head_html += html + "\n"
         return
