@@ -298,6 +298,17 @@ def configure_and_register(mode: str) -> None:
                 class_name="probe-toast-stay",
             )
 
+    @ui.page("/nested")
+    def nested() -> None:
+        ui.add_head_html(DARK_WATCHER_HTML)
+        with (
+            bs.scope() if mixed else nullcontext(),
+            bs.Modal(is_open=True),
+            bs.ModalBody(),
+            bs.DropdownMenu(label="Menu toggle"),
+        ):
+            bs.DropdownMenuItem("Item 1")
+
     @ui.page("/clicks")
     def clicks() -> None:
         ui.add_head_html(DARK_WATCHER_HTML)

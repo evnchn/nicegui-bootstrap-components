@@ -304,6 +304,19 @@ async def test_modal_open_close_esc_delete_cleanup(server: str) -> None:
         assert locked is False
 
 
+async def test_nested_dropdown_events_do_not_close_modal(server: str) -> None:
+    async with _chromium() as page:
+        await _goto(page, server, "/nested", "text=Menu toggle")
+        modal = page.locator("#ngbs-overlay-root .modal")
+        await expect(modal).to_have_class(re.compile(r"\bshow\b"), timeout=_WAIT)
+        toggle = page.get_by_text("Menu toggle")
+        for _ in range(2):
+            await toggle.click()
+            await page.wait_for_timeout(1000)
+            await expect(modal).to_have_class(re.compile(r"\bshow\b"))
+            await expect(modal).to_have_attribute("data-ngbs-open", "true")
+
+
 async def test_dropdown_outside_click_esc(server: str) -> None:
     async with _chromium() as page:
         await _goto(page, server, "/mode-b", "#probe-dropdown")
