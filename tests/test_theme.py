@@ -125,6 +125,7 @@ def test_setup_unscoped_cdn_injects_import(monkeypatch: pytest.MonkeyPatch) -> N
     assert len(imports) == 2
     assert imports[0].startswith('<style id="ngbs-theme-client">')
     assert "bootswatch@5.3.8" in imports[0]
+    assert "ngbs-host-unscoped.css" in imports[1]
     assert "ngbs-flatly" not in "".join(imports)
 
 
