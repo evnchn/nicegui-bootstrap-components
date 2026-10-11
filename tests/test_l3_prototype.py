@@ -671,9 +671,14 @@ async def test_theme_swap_creates_client_stylesheet(server: str) -> None:
         await _goto(page, server, "/theme", "#btn-theme-swap")
         await page.locator("#btn-theme-swap").click()
         await page.wait_for_function(
-            "() => !!document.getElementById('ngbs-theme-client')",
+            "() => document.getElementById('ngbs-theme-client').textContent.includes('ngbs-flatly')",
             timeout=_WAIT,
         )
         content = await page.eval_on_selector("#ngbs-theme-client", "el => el.textContent || ''")
         assert "layer(overrides)" in content
-        assert "ngbs-flatly" in content
+        sheets = await page.evaluate(
+            """() => [...document.querySelectorAll('style')].flatMap(
+              (s) => [...s.textContent.matchAll(/ngbs-(?!host|grid|icons)[a-z-]+\\.css/g)])
+              .map((m) => m[0])"""
+        )
+        assert sheets == ["ngbs-flatly.css", "ngbs-compat.css"]
