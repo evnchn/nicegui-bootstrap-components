@@ -7,11 +7,14 @@ from typing import Any
 
 from . import themes as _themes
 from ._host import add_head_html, client_store, get_client, run_javascript
-from .assets import _validate_stylesheet_url, _validated_theme_cdn, get_asset_manager
+from .assets import (
+    THEME_STYLE_ID,
+    _validate_stylesheet_url,
+    _validated_theme_cdn,
+    get_asset_manager,
+)
 
 __all__ = ["ThemeController"]
-
-THEME_STYLE_ID = "ngbs-theme-client"
 
 _MODE_VALUES = {"light", "dark", "auto"}
 

@@ -28,6 +28,7 @@ _COMPAT_CSS_NAME = "ngbs-compat.css"
 _COMPAT_CSS_NAME_UNSCOPED = "ngbs-compat-unscoped.css"
 _HOST_CSS_NAME = "ngbs-host.css"
 _HOST_CSS_NAME_UNSCOPED = "ngbs-host-unscoped.css"
+THEME_STYLE_ID = "ngbs-theme-client"
 _BOOTSTRAP_CDN = _themes.BOOTSTRAP.cdn
 
 _FORBIDDEN_URL_CHARACTERS = frozenset("\"'{}\\;()<>@")
@@ -80,6 +81,10 @@ def _layered_imports(hrefs: list[str]) -> str:
 
 def _layered_import(href: str) -> str:
     return _layered_imports([href])
+
+
+def _theme_import(href: str) -> str:
+    return _layered_import(href).replace("<style>", f'<style id="{THEME_STYLE_ID}">', 1)
 
 
 def _validated_theme_cdn(theme: _themes.Theme) -> str:
@@ -224,7 +229,7 @@ class AssetManager:
         self._register_static()
         self._stack.enter_context(as_file(resource))
         href = f"{STATIC_URL_PREFIX}/{rel}"
-        add_head_html(_layered_import(href), shared=True)
+        add_head_html(_theme_import(href), shared=True)
         compat_name = (
             _COMPAT_CSS_NAME_UNSCOPED if self.mode is StyleMode.UNSCOPED else _COMPAT_CSS_NAME
         )
@@ -249,14 +254,11 @@ class AssetManager:
         if self._injected:
             return
         if self.cdn:
-            imports = [_validated_theme_cdn(self.theme)]
+            add_head_html(_theme_import(_validated_theme_cdn(self.theme)), shared=True)
             host_name = (
                 _HOST_CSS_NAME_UNSCOPED if self.mode is StyleMode.UNSCOPED else _HOST_CSS_NAME
             )
-            host_href = self._optional_bundled_url(f"{DIST_CSS_DIR}/{host_name}")
-            if host_href is not None:
-                imports.append(host_href)
-            add_head_html(_layered_imports(imports), shared=True)
+            self._inject_optional_import(f"{DIST_CSS_DIR}/{host_name}")
             self._inject_icons()
             self._injected = True
             return
