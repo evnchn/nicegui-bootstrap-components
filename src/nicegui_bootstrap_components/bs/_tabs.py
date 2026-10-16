@@ -530,6 +530,8 @@ class _TabsImpl(BootstrapElement):
             if tab_id is None:
                 continue
             selected = tab_id == self._active_tab
+            if selected and tab in self._lazy_held:
+                self._mount_pane(tab)
             pane_id = _pane_dom_id(tab)
             for key, value in tab_pane_aria(
                 tab_id=tab_id,

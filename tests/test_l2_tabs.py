@@ -236,3 +236,40 @@ async def test_tabs_lazy_inactive_pane_hidden_until_activated(user: User) -> Non
     widget._on_tab_click("b")
     assert "d-none" not in pane_b.classes
     assert "active" in pane_b.classes
+
+
+async def test_tabs_lazy_active_tab_setter_shows_held_pane(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    holder: list[Tabs] = []
+
+    @ui.page("/")
+    def page() -> None:
+        holder.append(Tabs([Tab(label="A", tab_id="a"), Tab(label="B", tab_id="b")], lazy=True))
+
+    await user.open("/")
+    widget = holder[0]
+    pane_b = widget._find_tab("b")
+    assert pane_b is not None
+    widget.active_tab = "b"
+    assert "d-none" not in pane_b.classes
+    assert "active" in pane_b.classes
+    assert pane_b.parent_slot.parent is widget._content
+
+
+async def test_tabs_lazy_removing_active_tab_shows_fallback_pane(user: User) -> None:
+    setup(mode=StyleMode.MIXED)
+    holder: list[Tabs] = []
+
+    @ui.page("/")
+    def page() -> None:
+        holder.append(Tabs([Tab(label="A", tab_id="a"), Tab(label="B", tab_id="b")], lazy=True))
+
+    await user.open("/")
+    widget = holder[0]
+    pane_a = widget._find_tab("a")
+    pane_b = widget._find_tab("b")
+    assert pane_a is not None and pane_b is not None
+    pane_a.delete()
+    assert widget.active_tab == "b"
+    assert "d-none" not in pane_b.classes
+    assert "active" in pane_b.classes
