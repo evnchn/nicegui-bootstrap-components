@@ -470,9 +470,11 @@ class _TabsImpl(BootstrapElement):
         if self._lazy and not selected:
             if tab not in self._lazy_held:
                 self._lazy_held.append(tab)
+            _set_class(tab, "d-none", True)
             return
         if tab in self._lazy_held:
             self._lazy_held.remove(tab)
+        _set_class(tab, "d-none", False)
         tab.move(self._content)
         _set_class(tab, "active", selected)
 
@@ -528,6 +530,8 @@ class _TabsImpl(BootstrapElement):
             if tab_id is None:
                 continue
             selected = tab_id == self._active_tab
+            if selected and tab in self._lazy_held:
+                self._mount_pane(tab)
             pane_id = _pane_dom_id(tab)
             for key, value in tab_pane_aria(
                 tab_id=tab_id,
