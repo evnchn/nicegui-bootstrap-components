@@ -118,8 +118,8 @@ def page() -> None:
 
 `bind_value` keeps `state.name` and the control in sync. `bind_text_from`
 (NiceGUI) mirrors that value onto a label. You can use a handler, a
-binding, or both; restoration from `persist=` does **not** fire `on_change`
-(see [Compatibility](../compatibility.md)).
+binding, or both. `persist=` is not implemented on Input, Textarea or Carousel
+yet (see [Compatibility](../compatibility.md)).
 
 Not every Bootstrap component is a value control. Structural pieces
 (`Card`, `Row`, `Navbar`) have no `.value`. Check the component page when
@@ -189,10 +189,10 @@ have no equivalents; branch in ordinary Python instead.
 
 ## Persistence
 
-`persist="local"` or `persist="session"` plus a public `id` stores the
-control’s value across reloads. Restore does not fire `on_change`, so a
-binding updates and your handler does not. That is intentional: a reload
-should not look like a user edit. Details are in
-[Compatibility](../compatibility.md) and [FAQ](../faq.md).
+`persist` is not implemented on Input, Textarea or Carousel yet. Those
+controls raise `UnsupportedPropError` for any value other than `"off"`. When
+it is implemented, restore should not fire `on_change`, because a reload should
+not look like a user edit. See [Compatibility](../compatibility.md) and
+[FAQ](../faq.md).
 
 See also [Mixing with NiceGUI pages](mixed-nicegui-pages.md).
