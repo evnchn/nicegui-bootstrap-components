@@ -7,6 +7,7 @@ from nicegui import ui
 from nicegui.testing import User
 
 from nicegui_bootstrap_components import StyleMode, setup
+from nicegui_bootstrap_components._base import UnsupportedPropError
 from nicegui_bootstrap_components.bs._carousel import (
     Carousel,
     DbcCarousel,
@@ -141,10 +142,10 @@ def test_ride_is_unknown_kwarg() -> None:
         DbcCarousel(items=[], ride=False)
 
 
-def test_persist_requires_id() -> None:
-    with pytest.raises(ValueError):
+def test_persist_not_implemented() -> None:
+    with pytest.raises(UnsupportedPropError):
         Carousel(items=[], persist="local")
-    with pytest.raises(ValueError):
+    with pytest.raises(UnsupportedPropError):
         Carousel(items=[], persist="session")
 
 

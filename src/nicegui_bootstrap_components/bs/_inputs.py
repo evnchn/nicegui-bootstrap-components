@@ -397,8 +397,10 @@ class _InputImpl(_TextControlBase):
             raise PropConflictError("valid and invalid cannot both be True")
         if persist not in {"off", "local", "session"}:
             raise ValueError("persist must be 'off', 'local', or 'session'")
-        if persist != "off" and not id:
-            raise ValueError("persist requires a public id")
+        if persist != "off":
+            raise UnsupportedPropError(
+                f"persist={persist!r} is not implemented yet; use persist='off'"
+            )
         if value is None:
             value = ""
         super().__init__(
@@ -496,8 +498,10 @@ class _TextareaImpl(_TextControlBase):
             raise PropConflictError("valid and invalid cannot both be True")
         if persist not in {"off", "local", "session"}:
             raise ValueError("persist must be 'off', 'local', or 'session'")
-        if persist != "off" and not id:
-            raise ValueError("persist requires a public id")
+        if persist != "off":
+            raise UnsupportedPropError(
+                f"persist={persist!r} is not implemented yet; use persist='off'"
+            )
         if value is None:
             value = ""
         super().__init__(

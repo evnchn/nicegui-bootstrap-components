@@ -7,7 +7,13 @@ from typing import Any
 
 from nicegui.element import Element
 
-from .._base import BootstrapElement, make_surface_classes, normalize_style, style_to_css
+from .._base import (
+    BootstrapElement,
+    UnsupportedPropError,
+    make_surface_classes,
+    normalize_style,
+    style_to_css,
+)
 from .._host import set_element_text
 
 __all__ = [
@@ -81,11 +87,11 @@ def resolve_carousel_interval(interval: int | bool | None) -> int | None:
     return int(interval)
 
 
-def _validate_persist(persist: str, public_id: str | None) -> None:
+def _validate_persist(persist: str) -> None:
     if persist not in _PERSIST_MODES:
         raise ValueError(f"persist must be 'off', 'local', or 'session', got {persist!r}")
-    if persist != "off" and not public_id:
-        raise ValueError("persist requires a public id when not 'off'")
+    if persist != "off":
+        raise UnsupportedPropError(f"persist={persist!r} is not implemented yet; use persist='off'")
 
 
 class _CarouselImpl(BootstrapElement):
@@ -122,7 +128,7 @@ class _CarouselImpl(BootstrapElement):
         self._surface = _surface
         raw_id: Any = kwargs.get("id")
         public_id = raw_id if isinstance(raw_id, str) else None
-        _validate_persist(persist, public_id)
+        _validate_persist(persist)
 
         slide_enabled = True if slide is None else bool(slide)
         self._structural_classes = tuple(
